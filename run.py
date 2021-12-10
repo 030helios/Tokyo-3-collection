@@ -2,6 +2,11 @@ from flask import Flask, render_template, request, jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from datetime import timedelta
 import json
+from urllib.request import urlopen
+
+myfile = urlopen("http://140.113.167.23/se2020/product/all").read()
+myfile = json.loads(myfile)
+print(myfile)
 
 app = Flask(__name__)
 app.secret_key = 'dd06be55a06c03312b2ab109b5f8f6ab'

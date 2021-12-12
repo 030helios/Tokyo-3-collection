@@ -6,7 +6,8 @@ from urllib.request import urlopen
 
 myfile = urlopen("http://140.113.167.23/se2020/product/all").read()
 myfile = json.loads(myfile)
-print(myfile)
+pictures = [dic['img_url'] for dic in myfile]
+print(pictures)
 
 app = Flask(__name__)
 app.secret_key = 'dd06be55a06c03312b2ab109b5f8f6ab'
@@ -18,8 +19,11 @@ login_manager.login_view = 'logout'
 
 # config
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
+
+
 class User(UserMixin):
     pass
+
 
 # users to [phone,shop]
 users = {}
@@ -63,7 +67,7 @@ def index():
     data = tryLogin(Acc, Password)
     if data['Passed']:
         Phone = data['Phone']
-        users[Acc] = [Phone,'']
+        users[Acc] = [Phone, '']
         user = User()
         user.id = Acc
         login_user(user)
@@ -95,7 +99,7 @@ def homePage():
     Cities.insert(0, 'All')
     Amounts = ['All', '0', '1~99', '100+']
     Acc = current_user.get_id()
-    return render_template('index.html', Acc=Acc, Phone=users[Acc][0], Cities=Cities, Amounts=Amounts)
+    return render_template('home.html', Acc=Acc, Phone=users[Acc][0], pictures=pictures, Cities=Cities, Amounts=Amounts)
 
 
 @app.route('/_searchShopList', methods=['GET'])
@@ -108,7 +112,8 @@ def _searchShopList():
     Amount = request.args.get('Amount')
     WorkOnly = request.args.get('WorkOnly')
     Acc = current_user.get_id()
-    data = searchShopList(Shop, City, LowPrice,HighPrice, Amount, WorkOnly, Acc)
+    data = searchShopList(Shop, City, LowPrice,
+                          HighPrice, Amount, WorkOnly, Acc)
     return jsonify(data)
 
 
@@ -203,7 +208,8 @@ def _searchMyOrderList():
         # return like searchShopList
         # orders by this Acc
         # OID Status Start End Shop Total Price
-        data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +"<br> "+data[5]), data[6], ("$"+data[9] + "<br> (" + data[7]+"*$"+data[8]+")")])
+        data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +
+                             "<br> "+data[5]), data[6], ("$"+data[9] + "<br> (" + data[7]+"*$"+data[8]+")")])
     return jsonify(data2)
 
 
@@ -218,7 +224,8 @@ def _searchShopOrderList():
         # return like searchShopList
         # orders by this Acc
         # OID Status Start End Shop Total Price
-        data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +"<br> "+data[5]), data[6], ("$"+data[9] + "<br> (" + data[7]+"*$"+data[8]+")")])
+        data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +
+                             "<br> "+data[5]), data[6], ("$"+data[9] + "<br> (" + data[7]+"*$"+data[8]+")")])
     return jsonify(data2)
 
 

@@ -35,10 +35,8 @@ Released   : 20140225
 	<div id="header" class="container">
 		<div id="menu">
 			<ul>
-				<li><a href="/home" accesskey="1" title="">Home</a></li>
-				<li class="current_page_item"><a href="/shop" accesskey="2" title="">Shop</a></li>
+				<li class="current_page_item"><a href="/home" accesskey="1" title="">Home</a></li>
 				<li><a href="/myOrder" accesskey="3" title="">My Order</a></li>
-				<li><a href="/shopOrder" accesskey="4" title="">Shop Order</a></li>
 				<li><a href="/" accesskey="5" title="">Logout</a></li>
 			</ul>
 		</div>
@@ -47,59 +45,79 @@ Released   : 20140225
 <div id="wrapper">
 	<div id="page" class="container">
 		<div id="content">
-			<h1>My Shop</h1>
-			<table class="table" id="ShopData">
-				<tbody>
+			<!--Profile-->
+			<h1>Profile</h1>
+			<table class="table" id="AccountData">
+				<tr>
+					<td>Account</td>
+					<td>{{Acc}}</td>
+				</tr>
+				<tr>
+					<td>Phone</td>
+					<td>{{Phone}}</td>
+				</tr>
+			</table>
+			<!--select shop-->
+			<h1>Shop List</h1>
+			<table class="table">
+				<form name="ShopSelect">
 					<tr>
 						<td>Shop</td>
-						<td>{{MyShop}}</td>
+						<td>
+							<input type="text" name="Shop" id="Shop" />
+						</td>
 					</tr>
 					<tr>
 						<td>City</td>
-						<td>{{MyCity}}</td>
+						<td>
+							<select name="City">
+							{% for city in Cities%}
+								<option value="{{city}}">{{city}}</option>
+							{% endfor%}
+							</select>
+						</td>
 					</tr>
 					<tr>
-						<form name="PriceChange">
-							<td>Price</td>
-							<td>
-								<input type="text" name="Price" id="Price" value={{MyPrice}} />
-								<button type="button" class="btn" id="PriceChange">Edit</button>
-							</td>
-						</form>
+						<td>Price</td>
+						<td>
+							<input type="text" name="LowPrice" id="LowPrice" />
+							<nobr>~</nobr>
+							<input type="text" name="HighPrice" id="HighPrice" />
+							<h2></h2>
+						</td>
 					</tr>
 					<tr>
-						<form name="AmountChange">
-							<td>Amount</td>
-							<td>
-								<input type="text" name="Amount" id="Amount" value={{MyAmount}} />
-								<button type="button" class="btn" id="AmountChange">Edit</button>
-							</td>
-						</form>
+						<td>Amount</td>
+						<td>
+							<select name="Amount">
+							{% for amount in Amounts%}
+								<option value="{{amount}}">{{amount}}</option>
+							{% endfor%}
+							</select>
+						</td>
 					</tr>
-				</tbody>
+				</form>
 			</table>
-			<h1>Employee</h1>
-			<form name="AddEmployee">
-				<label for="Employee">Employee</label>
-				<input type="text" name="Employee" id="Employee" />
-				<button type="button" class="btn" id="AddEmployee">Add</button>
-			</form>
-			<table class="table" id="employeeData">
-				<thead>
-					<tr><td>Account</td><td>Phone</td><td></td></tr>
-				</thead>
-				<h6></h6>
-				<tbody>
-					{% for employee, phone in Employees%}
-						<tr>
-							<td>{{employee}}</td>
-							<td>{{phone}}</td>
-							<td><button type="button" class="DelEmployeeBtn" id={{employee}}>Delete</button></td>
-						</tr>
-						<h6></h6>
+                <button type="button" class="btn" id="SearchShopListbtn">Search</button>
+				<label class="switch">
+				  <input type="checkbox" id="WorkOnly">
+				  <span class="slider round">Only show the shop I work at</span>
+				</label>
+			<h6></h6>
+			<div id="searchShopWrap" class="row clearfix">
+				<table class="table" id="Goods">
+					{% for picture in pictures%}
+					<div class="col-lg-3 col-sm-6 col-md-3">
+						<a>
+							<div class="box-img">
+								<h4>Product</h4>
+								<img src={{picture}} width="300" height="300"alt="" />
+							</div>
+						</a>
+					</div>
 					{% endfor%}
-				</tbody>
-			</table>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

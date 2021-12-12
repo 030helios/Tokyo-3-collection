@@ -96,29 +96,14 @@ $("#SearchShopListbtn").bind("click", function () {
             $("table").remove('#searchShopData');
         },
         success: function (result) {
-            var insertText = '<table class="table" id="searchShopData"><thead>';
-            insertText += '<tr><td>Shop</td>\
-            <td>City</td>\
-            <td>Mask Price</td>\
-            <td>Mask Amount</td>\
-            <td></td>\
-            </tr></thead>';
+            var insertText = '<table class="table" id="Goods">';
             for (var i = 0; i < result.data.length; i++) {
-                insertText += '<tr>';
-                for (var j = 0; j < result.data[i].length; j++) {
-                    insertText += '<td>';
-                    insertText += result.data[i][j];
-                    insertText += '</td>';
-                }
-                insertText += '<td><input type="text" name="Amount" id="_';
-                insertText += result.data[i][0];
-                insertText += '"/><button type="button" class="OrderBtn" id="';
-                insertText += result.data[i][0];
-                insertText += '">Buy!</button></td></tr>';
+                insertText += '<div class="col-lg-3 col-sm-6 col-md-3"><a><div class="box-img"><h4>Product</h4><img src="';
+                insertText += result.data[i];
+                insertText += '" width="300" height="300" alt="" /></div></a></div>';
             }
             insertText += '</table>';
-
-            $('#searchShopWrap').append(insertText);
+            $('#GoodsWrap').append(insertText);
         },
         complete: function () {
         },
@@ -272,9 +257,9 @@ $("#searchWrap").on("click", ".DoneOrderBtn", function () {
 })
 $(".DoneAllOrderBtn").bind("click", function () {
     var checkboxesChecked = "";
-    $("input[type=checkbox]:checked").each(function() {
-        checkboxesChecked+=($(this).val());
-        checkboxesChecked+=" ";
+    $("input[type=checkbox]:checked").each(function () {
+        checkboxesChecked += ($(this).val());
+        checkboxesChecked += " ";
     });
     var data = {
         OIDs: checkboxesChecked
@@ -297,9 +282,9 @@ $(".DoneAllOrderBtn").bind("click", function () {
 })
 $(".DelAllOrderBtn").bind("click", function () {
     var checkboxesChecked = "";
-    $("input[type=checkbox]:checked").each(function() {
-        checkboxesChecked+=($(this).val());
-        checkboxesChecked+=" ";
+    $("input[type=checkbox]:checked").each(function () {
+        checkboxesChecked += ($(this).val());
+        checkboxesChecked += " ";
     });
     var data = {
         OIDs: checkboxesChecked

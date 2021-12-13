@@ -94,26 +94,18 @@ def _tryRegister():
 @app.route('/home')
 @login_required
 def homePage():
-    from queryfunc import getCities
-    Cities = getCities()
-    Cities.insert(0, 'All')
-    Amounts = ['All', '0', '1~99', '100+']
     Acc = current_user.get_id()
-    return render_template('home.html', Acc=Acc, Phone=users[Acc][0], pictures=pictures, Cities=Cities, Amounts=Amounts)
+    return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
 
 
 @app.route('/_searchShopList', methods=['GET'])
 def _searchShopList():
     from queryfunc import searchShopList
-    Shop = request.args.get('Shop')
-    City = request.args.get('City')
+    Itemname = request.args.get('Itemname')
     LowPrice = request.args.get('LowPrice')
     HighPrice = request.args.get('HighPrice')
-    Amount = request.args.get('Amount')
-    WorkOnly = request.args.get('WorkOnly')
     Acc = current_user.get_id()
-    data = searchShopList(Shop, City, LowPrice,
-                          HighPrice, Amount, WorkOnly, Acc)
+    data = searchShopList(Itemname, LowPrice, HighPrice, Acc)
     return jsonify(data)
 
 

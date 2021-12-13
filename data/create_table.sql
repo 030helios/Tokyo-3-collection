@@ -1,10 +1,10 @@
 create table shop(
     ID char(5) not null,
+    itemname varchar(40) not null,
     category varchar(20) not null,
-    itemname varchar(20) not null,
-    img_url varchar(20) not null,
-    price int not null,
     stock int not null,
+    price int not null,
+    img_url varchar(200) not null,
     primary key (ID, itemname)
 );
 

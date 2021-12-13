@@ -74,35 +74,30 @@ $("#RegisterBtn").bind("click", function () {
 
 $("#SearchShopListbtn").bind("click", function () {
     const form = document.forms["ShopSelect"];
-    const Shop = form.elements.Shop.value;
-    const City = form.elements.City.value;
+    const Itemname = form.elements.Itemname.value;
     const LowPrice = form.elements.LowPrice.value;
     const HighPrice = form.elements.HighPrice.value;
-    const Amount = form.elements.Amount.value;
-    const WorkOnly = $('#WorkOnly').prop('checked');
     var data = {
-        Shop: Shop,
-        City: City,
+        Itemname: Itemname,
         LowPrice: LowPrice,
-        HighPrice: HighPrice,
-        Amount: Amount,
-        WorkOnly: WorkOnly
+        HighPrice: HighPrice
     }
     $.ajax({
         url: '/_searchShopList',
         type: 'GET',
         data: data,
         beforeSend: function () {
-            $("table").remove('#searchShopData');
+            $('#GoodsWrap').empty();
         },
         success: function (result) {
-            var insertText = '<table class="table" id="Goods">';
+            var insertText = '';
             for (var i = 0; i < result.data.length; i++) {
-                insertText += '<div class="col-lg-3 col-sm-6 col-md-3"><a><div class="box-img"><h4>Product</h4><img src="';
-                insertText += result.data[i];
+                insertText += '<div class="col-lg-3 col-sm-6 col-md-3"><a><div class="box-img"><h4>'
+                insertText += result.data[i][0];
+                insertText += '</h4><img src="';
+                insertText += result.data[i][1];
                 insertText += '" width="300" height="300" alt="" /></div></a></div>';
             }
-            insertText += '</table>';
             $('#GoodsWrap').append(insertText);
         },
         complete: function () {

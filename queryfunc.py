@@ -2,21 +2,22 @@
 
 def prevent(target):
     if target.find('=') != -1 or target.find("'") != -1 or target.find('#') != -1:
-        return False  #Illegal character detected
+        return False  # Illegal character detected
     else:
         return True
+
 
 def tryLogin(Acc, pwd):
     import sqlite3
     import hashlib
     m = hashlib.md5()
 
-    data = {'Passed' : False, 'Phone' : ''}
+    data = {'Passed': False, 'Phone': ''}
 
     if prevent(Acc) == False or prevent(pwd) == False:
         print("Not passed")
-        return data        
-    
+        return data
+
     query = \
         "select username, pwd, phone \
         from user \
@@ -33,7 +34,7 @@ def tryLogin(Acc, pwd):
         print("Not passed")
         db.close()
         return data
-    
+
     else:
         m.update(pwd.encode('utf-8'))
         h = m.hexdigest()
@@ -81,18 +82,18 @@ def tryRegister(Acc, Pwd, ConPwd, Phone):
     if Phone.isdigit() == False and Phone != "":
         data['3'] = "Invalid phone format"
         noEx = False
-    #error here when register
+    # error here when register
         '''
     if target(Acc) == False:
         data['0'] = "Illegal character detected"
         noEx = False     
-        ''' 
+        '''
 
     if not noEx:
         return data
 
     query1 = \
-    "select username\
+        "select username\
     from user\
     where username = '" + str(Acc) + "'"
 
@@ -103,7 +104,7 @@ def tryRegister(Acc, Pwd, ConPwd, Phone):
     cursor = db.cursor()
     print(cursor)
     cursor.execute(query1)
-    #error here no such column username
+    # error here no such column username
 
     row = cursor.fetchall()
     print(row)
@@ -112,31 +113,31 @@ def tryRegister(Acc, Pwd, ConPwd, Phone):
         print("repeated")
         data['0'] = "Username is repeated"
         noEx = False
-    
+
     if noEx:
         data['0'] = "Register success!"
         print("insert")
         m.update(Pwd.encode('utf-8'))
         h = m.hexdigest()
 
-        U_ID = str(random.randint(1000000,9999999))
+        U_ID = str(random.randint(1000000, 9999999))
 
         query2 = "insert into user\
         values('" + U_ID + "','" + str(Acc) + "','" + str(h) + "','" + str(Phone) + "')"
         print(query2)
 
         cursor.execute(query2)
-        db.commit()       
-        
+        db.commit()
+
     db.close()
     return data
 
 
-def tryRegisterShop(Shop,City,Price,Amount,name):
+def tryRegisterShop(Shop, City, Price, Amount, name):
     import sqlite3
     import random
-    Price.replace(' ','')
-    Amount.replace(' ','')
+    Price.replace(' ', '')
+    Amount.replace(' ', '')
     data = {'0': "", '1': "", '2': "", '3': ""}
     noEx = True
     db = sqlite3.connect("data.db")
@@ -161,8 +162,8 @@ def tryRegisterShop(Shop,City,Price,Amount,name):
         noEx = False
     if prevent(Shop) == False:
         data['0'] = "Illegal character detected"
-        noEx = False        
-    
+        noEx = False
+
     if noEx == False:
         db.close()
         return data
@@ -181,9 +182,9 @@ def tryRegisterShop(Shop,City,Price,Amount,name):
     else:
         S_ID = str(random.randint(100000, 999999))
         query2 = "insert into shop\
-            values('" + S_ID + "','" + str(Shop) + "','" + str(City) + "','" + str(name) + "'," + str(Price) + "," + str(Amount) + ")" 
+            values('" + S_ID + "','" + str(Shop) + "','" + str(City) + "','" + str(name) + "'," + str(Price) + "," + str(Amount) + ")"
         cursor.execute(query2)
-        db.commit()   
+        db.commit()
         data['0'] = 'Register Success'
     db.close()
     return data
@@ -204,36 +205,21 @@ def getCities():
     return data
 
 
-def searchShopList(Shop,City,LowPrice,HighPrice,Amount,only,name):
+def searchShopList(Itemname, LowPrice, HighPrice, name):
     import sqlite3
-    data = {'data':[]}
+    data = {'data': []}
     query = \
-    "select shopname, city, price, amount \
-    from shop\
-    where "
+        "select itemname, img_url, price, stock from shop where "
     if LowPrice != "" and HighPrice != "":
         if int(LowPrice) > int(HighPrice):
-            tmp = LowPrice
-            LowPrice = HighPrice
-            HighPrice = tmp
+            LowPrice, HighPrice = HighPrice, LowPrice
 
-    if Shop != "" and prevent(Shop) != False:
-        query += "shopname like '%" + str(Shop) + "%' and  "
-    if City != "All":
-        query += "city = '" + str(City) + "' and  "
+    if Itemname != "" and prevent(Itemname) != False:
+        query += "itemname like '%" + str(Itemname) + "%' and  "
     if LowPrice != "" and prevent(LowPrice) != False:
         query += "price >= " + str(LowPrice) + " and  "
     if HighPrice != "" and prevent(HighPrice) != False:
         query += "price <= " + str(HighPrice) + " and  "
-    if Amount != "All":
-        if Amount == "0":
-            query += "amount = 0 and  "
-        if Amount == "1~99":
-            query += "amount >= 1 and amount <= 99 and  "
-        if Amount == "100+":
-            query += "amount >= 100 and  "
-    if only == "true":
-        query += "( shopname in (select shopname from shop natural join employee where username = '" + str(name) + "') or shopname in (select shopname from shop where shopowner = '" + str(name) + "') )      "
     query = query[0:-6]
 
     print(query)
@@ -241,8 +227,8 @@ def searchShopList(Shop,City,LowPrice,HighPrice,Amount,only,name):
     cursor = db.execute(query)
     for row in cursor:
         insert = []
-        for i in range(len(row)):
-            insert.append(row[i])
+        for r in row:
+            insert.append(r)
         data['data'].append(insert)
 
     return data
@@ -269,7 +255,7 @@ def EmployeesOfShop(Shop):
 
 def hasShop(name):
     import sqlite3
-    data = {'HasShop': False , 'Shop': "", 'City': "", 'Price': 0, 'Amount': 0 }
+    data = {'HasShop': False, 'Shop': "", 'City': "", 'Price': 0, 'Amount': 0}
 
     query = "select shopname, city, price, amount \
     from shop \
@@ -302,7 +288,7 @@ def AddEmployee(shop, employee):
     cursor = db.execute(query)
     if cursor.fetchone() == None:
         data["data"] = "No result"
-        return data        
+        return data
 
     query1 = "select shopname, username\
         from employee\
@@ -342,9 +328,10 @@ def DelEmployee(shop, employee):
         data["data"] = "Employee successfully deleted"
         return data
 
+
 def PriceChange(Shop, Price):
     import sqlite3
-    Price.replace(' ','')
+    Price.replace(' ', '')
     data = {"data": ""}
     db = sqlite3.connect("data.db")
 
@@ -354,7 +341,7 @@ def PriceChange(Shop, Price):
     if int(Price) < 0:
         data["data"] = "Invalid value"
         return data
-    
+
     query = "update shop\
         set price = " + str(Price) + " where shopname = '" + str(Shop) + "'"
     cursor = db.execute(query)
@@ -365,7 +352,7 @@ def PriceChange(Shop, Price):
 
 def AmountChange(Shop, Amount):
     import sqlite3
-    Amount.replace(' ','')
+    Amount.replace(' ', '')
     data = {"data": ""}
     db = sqlite3.connect("data.db")
 
@@ -387,12 +374,12 @@ def AmountChange(Shop, Amount):
 # return like searchShopList
 # orders by this Acc
 # OID Status Start End Shop Total Price
-def searchMyOrderList(Acc,Status):
+def searchMyOrderList(Acc, Status):
     import sqlite3
-    data = {'data':[]}
+    data = {'data': []}
 
     query = \
-    "select orderID, stat, time_start, orderer, time_end, seller, shopname, order_amount, order_price\
+        "select orderID, stat, time_start, orderer, time_end, seller, shopname, order_amount, order_price\
     from order_\
     where orderer = '" + str(Acc) + "'         "
 
@@ -422,15 +409,15 @@ def searchMyOrderList(Acc,Status):
 
 # return like searchShopList
 # OID Status Start End Shop Total Price
-def searchShopOrderList(Shop,Status):
+def searchShopOrderList(Shop, Status):
     import sqlite3
-    data = {'data':[]}
+    data = {'data': []}
 
     print(Shop)
     print(Status)
 
     query = \
-    "select orderID, stat, time_start, orderer, time_end, seller, shopname, order_amount, order_price\
+        "select orderID, stat, time_start, orderer, time_end, seller, shopname, order_amount, order_price\
     from order_\
     where   "
     if Shop != "All":
@@ -442,7 +429,7 @@ def searchShopOrderList(Shop,Status):
     print(query)
 
     db = sqlite3.connect("data.db")
-    #error sqlite3.OperationalError: near "shop": syntax error
+    # error sqlite3.OperationalError: near "shop": syntax error
     cursor1 = db.execute(query)
 
     for row in cursor1:
@@ -463,10 +450,10 @@ def getAccShops(Acc):
     data = []
 
     query_ = \
-    "select distinct shopname\
+        "select distinct shopname\
     from shop\
     where shopowner = '" + str(Acc) + "'"
-    
+
     db = sqlite3.connect("data.db")
     cursor = db.execute(query_)
     row = cursor.fetchone()
@@ -477,7 +464,7 @@ def getAccShops(Acc):
         data.append(str(row[0]))
 
     query = \
-    "select distinct shopname\
+        "select distinct shopname\
     from employee\
     where username = '" + str(Acc) + "'"
 
@@ -491,12 +478,12 @@ def getAccShops(Acc):
     return data
 
 
-#return all Shops in a list
+# return all Shops in a list
 def getShops():
     import sqlite3
     data = []
     query = \
-    "select shopname\
+        "select shopname\
     from shop"
 
     db = sqlite3.connect("data.db")
@@ -504,10 +491,12 @@ def getShops():
 
     for row in cursor:
         data.append(str(row[0]))
-    
+
     return data
 
 # return message: success or fail and why
+
+
 def Order(Acc, Shop, Amount):
     import sqlite3
     import time
@@ -517,7 +506,7 @@ def Order(Acc, Shop, Amount):
     if Amount.isdigit() == False or int(Amount) <= 0:
         data["data"] = "Illegal input Amount"
         return data
-    
+
     query1 = "select amount, price\
     from shop\
     where shopname = '" + str(Shop) + "'"
@@ -537,7 +526,7 @@ def Order(Acc, Shop, Amount):
     result = inventory - int(Amount)
 
     query_ = "update shop\
-    set amount = " + str(result) + " where shopname = '" + str(Shop) + "'" 
+    set amount = " + str(result) + " where shopname = '" + str(Shop) + "'"
     cursor = db.execute(query_)
     db.commit()
 
@@ -551,7 +540,7 @@ def Order(Acc, Shop, Amount):
 
     t = time.localtime()
     time_start = time.strftime("%Y_%m_%d_%H_%M_%S")
-    
+
     query3 = "insert into order_\
     values(" + str(OID) + ",'Not Finished','" + str(Acc) + "','" + "" + "','" + str(time_start) + "','" + "" + "','" + str(Shop) + "'," + str(Amount) + "," + str(int(Amount) * price) + ")"
     print(query3)
@@ -564,6 +553,8 @@ def Order(Acc, Shop, Amount):
     return data
 
 # return message: success or fail and why
+
+
 def DelOrder(Acc, OID):
     import sqlite3
     import time
@@ -627,7 +618,7 @@ def DelOrder(Acc, OID):
     result = remain + amount
 
     query5 = "update shop\
-    set amount = " + str(result) + " where shopname = '" + shop + "'" 
+    set amount = " + str(result) + " where shopname = '" + shop + "'"
     cursor = db.execute(query5)
     db.commit()
 
@@ -650,7 +641,7 @@ def DoneOrder(Acc, OID):
     shop = str(row[0])
     amount = int(row[1])
     stat = str(row[2])
-    
+
     if stat == "Cancelled":
         data["data"] = "The order is already cancelled"
         return data
@@ -674,7 +665,7 @@ def DoneOrder(Acc, OID):
     where orderID = " + str(OID) + ""
 
     cursor = db.execute(query5)
-    db.commit() 
+    db.commit()
 
     query6 = "update order_\
     set seller = '" + str(Acc) + "'\
@@ -711,7 +702,8 @@ def DoneAllOrder(Acc, OIDs):
         stat = str(row[2])
 
         if stat == "Cancelled":
-            data["data"] = "The order number " + str(OID) + " is already cancelled"
+            data["data"] = "The order number " + \
+                str(OID) + " is already cancelled"
             return data
 
         if stat == "Finished":
@@ -735,7 +727,7 @@ def DoneAllOrder(Acc, OIDs):
         where orderID = " + str(OID) + ""
 
         cursor = db.execute(query5)
-        db.commit() 
+        db.commit()
 
         query6 = "update order_\
             set seller = '" + str(Acc) + "'\
@@ -775,13 +767,15 @@ def DelAllOrder(Acc, OIDs):
         if row == None:
             data["data"] = "Order " + str(OID) + " doesn't exist"
             return data
-        
+
         if str(row[1]) == "Cancelled":
-            data["data"] = "The order number " + str(OID) + " is already cancelled"
+            data["data"] = "The order number " + \
+                str(OID) + " is already cancelled"
             return data
 
         if str(row[1]) == "Finished":
-            data["data"] = "Finished order number " + str(OID) + " can't be cancelled"
+            data["data"] = "Finished order number " + \
+                str(OID) + " can't be cancelled"
             return data
 
         t = time.localtime()
@@ -819,7 +813,7 @@ def DelAllOrder(Acc, OIDs):
         result = remain + amount
 
         query5 = "update shop\
-        set amount = " + str(result) + " where shopname = '" + shop + "'" 
+        set amount = " + str(result) + " where shopname = '" + shop + "'"
         cursor = db.execute(query5)
         db.commit()
 

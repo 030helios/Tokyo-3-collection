@@ -158,8 +158,8 @@ $("#SearchMyOrderbtn").bind("click", function () {
             <td>Status</td>\
             <td>Start</td>\
             <td>End</td>\
-            <td>Itemname</td>\
-            <td>Total Price</td>\
+            <td>Item name</td>\
+            <td>Total price</td>\
             <td>Action</td>\
             </tr></thead>';
             for (var i = 0; i < result.data.length; i++) {
@@ -227,6 +227,7 @@ $("#orderWrap").on("click", ".DoneOrderBtn", function () {
         }
     })
 })
+
 $(".DelAllOrderBtn").bind("click", function () {
     var checkboxesChecked = "";
     $("input[type=checkbox]:checked").each(function () {
@@ -252,13 +253,18 @@ $(".DelAllOrderBtn").bind("click", function () {
         }
     })
 })
-$("#searchShopWrap").on("click", ".OrderBtn", function () {
+
+$(".DoneAllOrderBtn").bind("click", function () {
+    var checkboxesChecked = "";
+    $("input[type=checkbox]:checked").each(function() {
+        checkboxesChecked+=($(this).val());
+        checkboxesChecked+=" ";
+    });
     var data = {
-        Shop: this.id,
-        Amount: document.getElementById('_' + this.id).value
+        OIDs: checkboxesChecked
     }
     $.ajax({
-        url: '/_Order',
+        url: '/_DoneAllOrder',
         type: 'GET',
         data: data,
         beforeSend: function () {
@@ -270,6 +276,62 @@ $("#searchShopWrap").on("click", ".OrderBtn", function () {
         complete: function () {
         },
         error: function () {
+        }
+    })
+})
+
+$("#SearchShopOrderbtn").bind("click", function () {
+    const form = document.forms["OrderSelect"];
+    const Status = form.elements.Status.value;
+    const Itemname = form.elements.Itemname.value;
+    var data = {
+        Status: Status,
+        Shop: Itemname
+    }
+    $.ajax({
+        url: '/_searchShopOrderList',
+        type: 'GET',
+        data: data,
+        beforeSend: function () {
+            $("table").remove('#searchWrapData');
+        },
+        success: function (result) {
+            var insertText = '<table class="table" id="searchWrapData"><thead>';
+            insertText += '<tr><td>OID</td>\
+            <td>Orderer</td>\
+            <td>Status</td>\
+            <td>Start</td>\
+            <td>End</td>\
+            <td>Item name</td>\
+            <td>Total price</td>\
+            <td>Action</td>\
+            </tr></thead>';
+            for (var i = 0; i < result.data.length; i++) {
+                insertText += '<tr><td>';
+                if (result.data[i][2] == "Not Finished") {
+                    insertText += '<label class="switch"><input type="checkbox" class="chkboxName" id="';
+                    insertText += result.data[i][0] + '"value="' + result.data[i][0];
+                    insertText += '"></label>';
+                }
+                insertText += result.data[i][0];
+                insertText += '</td>';
+                for (var j = 1; j < result.data[i].length; j++) {
+                    insertText += '<td>';
+                    insertText += result.data[i][j];
+                    insertText += '</td>';
+                }
+                if (result.data[i][1] == "Not Finished") {
+
+                    insertText += '<td><button type="button" class="DoneOrderBtn" id="';
+                    insertText += result.data[i][0];
+                    insertText += '">Done</button><button type="button" class="DelOrderBtn" id="';
+                    insertText += result.data[i][0];
+                    insertText += '">X</button></td>';
+                }
+                insertText += '</tr>';
+            }
+            insertText += '</table>';
+            $('#searchWrap').append(insertText);
         }
     })
 })

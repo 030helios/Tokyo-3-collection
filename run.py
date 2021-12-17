@@ -88,7 +88,11 @@ def _tryRegister():
 @login_required
 def homePage():
     Acc = current_user.get_id()
-    return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
+    if(Acc=='admin'):
+        Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
+        return render_template('admin.html', Status=Status)
+    else:
+        return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
 
 
 @app.route('/_searchGoods', methods=['GET'])
@@ -195,26 +199,8 @@ def _searchShopOrderList():
     from queryfunc import searchShopOrderList
     _Shop = request.args.get('Shop')
     Status = request.args.get('Status')
-    data1 = searchShopOrderList(_Shop, Status)
-    data2 = {'data': []}
-    for data in data1['data']:
-        # return like searchGoods
-        # orders by this Acc
-        # OID Status Start End Shop Total Price
-        data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +
-                             "<br> "+data[5]), data[6], ("$"+data[9] + "<br> (" + data[7]+"*$"+data[8]+")")])
-    return jsonify(data2)
-
-
-@app.route('/shopOrder')
-@login_required
-def shopOrder():
-    from queryfunc import getAccShops
-    Acc = current_user.get_id()
-    Shops = getAccShops(Acc)
-    # return all Shops which Acc works in in a list
-    Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
-    return render_template('shopOrder.html', Status=Status, Shops=Shops)
+    data = searchShopOrderList(_Shop, Status)
+    return jsonify(data)
 
 
 @app.route('/_Order', methods=['GET'])

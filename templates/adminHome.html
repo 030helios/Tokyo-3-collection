@@ -35,8 +35,8 @@ Released   : 20140225
 	<div id="header" class="container">
 		<div id="menu">
 			<ul>
-				<li><a href="/home" accesskey="1" title="">Home</a></li>
-				<li class="current_page_item"><a href="/myOrder" accesskey="2" title="">My Order</a></li>
+				<li class="current_page_item"><a href="/home" accesskey="1" title="">Home</a></li>
+				<li><a href="/admin" accesskey="2" title="">admin</a></li>
 				<li><a href="/" accesskey="3" title="">Logout</a></li>
 			</ul>
 		</div>
@@ -45,28 +45,42 @@ Released   : 20140225
 <div id="wrapper">
 	<div id="page" class="container">
 		<div id="content">
+			<!--Profile-->
+			<h1>Profile</h1>
+			<table class="table" id="AccountData">
+				<tr>
+					<td>Account</td>
+					<td>{{Acc}}</td>
+				</tr>
+				<tr>
+					<td>Phone</td>
+					<td>{{Phone}}</td>
+				</tr>
+			</table>
 			<!--select shop-->
-			<h1>My Order</h1>
+			<h1>Start shopping</h1>
 			<table class="table">
-				<form name="OrderSelect">
+				<form name="ShopSelect">
 					<tr>
-						<td>Status</td>
+						<td>Itemname</td>
 						<td>
-							<select name="Status">
-							{% for status in Status%}
-								<option value="{{status}}">{{status}}</option>
-							{% endfor%}
-							</select>
+							<input type="text" name="Itemname" id="Itemname" />
+						</td>
+					</tr>
+					<tr>
+						<td>Price</td>
+						<td>
+							<input type="text" name="LowPrice" id="LowPrice" />
+							<nobr>~</nobr>
+							<input type="text" name="HighPrice" id="HighPrice" />
+							<h2></h2>
 						</td>
 					</tr>
 				</form>
 			</table>
-                <button type="button" class="btn" id="SearchMyOrderbtn">Search</button>
+            <button type="button" class="btn" id="SearchGoodsbtn">Search</button>
 			<h6></h6>
-			<button type="button" class="DelAllOrderBtn">Cancel Selected Orders</button>
-			<ul style="list-style: none;">
-				<li id="orderWrap"></li>
-			</ul>
+			<div id="goodsWrap" class="row clearfix"></div>
 		</div>
 	</div>
 </div>

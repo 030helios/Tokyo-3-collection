@@ -378,6 +378,84 @@ def DelAllOrder(Acc, OIDs):
     return data
 
 
+def searchShopOrderList(Shop, Status):
+    import sqlite3
+    data = {'data': []}
+    query = \
+        "select orderID, orderer, stat, time_start, time_end, itemname, order_price\
+    from order_\
+    where   "
+    if Shop != "":
+        query += "itemname like '%" + str(Shop) + "%' and  "
+    if Status != "All":
+        query += "stat = '" + str(Status) + "' and  "
+    query = query[0:-6]
+    print(query)
+
+    db = sqlite3.connect("data.db")
+    cursor = db.execute(query)
+
+    for row in cursor:
+        insert = []
+        for i in row:
+            insert.append(i)
+        data['data'].append(insert)
+
+    print(data)
+    return data
+
+
+def DoneAllOrder(Acc, OIDs):
+    import sqlite3
+    import time
+    data = {"data": ""}
+    db = sqlite3.connect("data.db")
+
+    print("DoneAllOrder")
+    print(OIDs)
+
+    for OID in OIDs:
+        print(OID)
+        query1 = "select stat\
+        from order_\
+        where orderID = " + str(OID) + ""
+
+        cursor = db.execute(query1)
+        row = cursor.fetchone()
+        stat = str(row[0])
+
+        if stat == "Cancelled":
+            data["data"] = "The order number " + \
+                str(OID) + " is already cancelled"
+            return data
+
+        if stat == "Finished":
+            data["data"] = "Finished order" + str(OID) + "can't be cancelled"
+            return data
+
+        time_end = time.strftime("%Y_%m_%d_%H_%M_%S")
+
+        query1 = "update order_\
+        set stat = " + "'Finished'\
+        where orderID = " + str(OID) + ""
+
+        print(query1)
+
+        cursor = db.execute(query1)
+        db.commit()
+
+        query2 = "update order_\
+        set time_end = '" + str(time_end) + "'\
+        where orderID = " + str(OID) + ""
+
+        cursor = db.execute(query2)
+        db.commit()
+
+    data["data"] = "Orders all succesfully done"
+
+    return data
+
+
 def DoneOrder(Acc, OID):
     import sqlite3
     import time

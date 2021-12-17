@@ -5,6 +5,19 @@ def prevent(target):
         return True
 
 
+def getItemNames():
+    import sqlite3
+    query = "select distinct itemname from shop"
+    db = sqlite3.connect("data.db")
+    cursor = db.execute(query)
+
+    data = []
+    for row in cursor:
+        print(str(row[0]))
+        data.append(str(row[0]))
+    return data
+
+
 def tryLogin(Acc, pwd):
     import sqlite3
     import hashlib
@@ -161,7 +174,7 @@ def searchGoods(Itemname, LowPrice, HighPrice):
     return data
 
 
-def PriceChange(Shop, Price):
+def PriceChange(Itemname, Price):
     import sqlite3
     Price.replace(' ', '')
     data = {"data": ""}
@@ -175,14 +188,14 @@ def PriceChange(Shop, Price):
         return data
 
     query = "update shop\
-        set price = " + str(Price) + " where itemname = '" + str(Shop) + "'"
+        set price = " + str(Price) + " where itemname = '" + str(Itemname) + "'"
     cursor = db.execute(query)
     db.commit()
     data["data"] = "Price succesfully changed"
     return data
 
 
-def AmountChange(Shop, Amount):
+def AmountChange(Itemname, Amount):
     import sqlite3
     Amount.replace(' ', '')
     data = {"data": ""}
@@ -196,7 +209,7 @@ def AmountChange(Shop, Amount):
         return data
 
     query = "update shop\
-        set stock = " + str(Amount) + " where itemname = '" + str(Shop) + "'"
+        set stock = " + str(Amount) + " where itemname = '" + str(Itemname) + "'"
     cursor = db.execute(query)
     db.commit()
     data["data"] = "Amount succesfully changed"
@@ -234,15 +247,15 @@ def searchMyOrderList(Acc, Status):
     return data
 
 
-def searchShopOrderList(Shop, Status):
+def searchShopOrderList(Itemname, Status):
     import sqlite3
     data = {'data': []}
     query = \
         "select orderID, orderer, stat, time_start, time_end, itemname, order_price\
     from order_\
     where   "
-    if Shop != "":
-        query += "itemname like '%" + str(Shop) + "%' and  "
+    if Itemname != "":
+        query += "itemname like '%" + str(Itemname) + "%' and  "
     if Status != "All":
         query += "stat = '" + str(Status) + "' and  "
     query = query[0:-6]
@@ -261,7 +274,7 @@ def searchShopOrderList(Shop, Status):
     return data
 
 
-def Order(Acc, Shop, Amount):
+def Order(Acc, Itemname, Amount):
     import sqlite3
     import time
 
@@ -273,7 +286,7 @@ def Order(Acc, Shop, Amount):
 
     query1 = "select stock, price\
     from shop\
-    where itemname = '" + str(Shop) + "'"
+    where itemname = '" + str(Itemname) + "'"
     print(query1)
 
     db = sqlite3.connect("data.db")
@@ -290,7 +303,7 @@ def Order(Acc, Shop, Amount):
     result = inventory - int(Amount)
 
     query_ = "update shop\
-    set stock = " + str(result) + " where itemname = '" + str(Shop) + "'"
+    set stock = " + str(result) + " where itemname = '" + str(Itemname) + "'"
     cursor = db.execute(query_)
     db.commit()
 
@@ -306,7 +319,7 @@ def Order(Acc, Shop, Amount):
     time_start = time.strftime("%Y_%m_%d_%H_%M_%S")
 
     query3 = "insert into order_\
-    values(" + str(OID) + ",'Not Finished','" + str(Acc) + "','" + str(Shop) + "','" + str(time_start) + "','" + "" + "'," + str(Amount) + "," + str(int(Amount) * price) + ")"
+    values(" + str(OID) + ",'Not Finished','" + str(Acc) + "','" + str(Itemname) + "','" + str(time_start) + "','" + "" + "'," + str(Amount) + "," + str(int(Amount) * price) + ")"
     print(query3)
 
     cursor = db.execute(query3)

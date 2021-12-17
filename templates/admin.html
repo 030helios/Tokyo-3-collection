@@ -45,6 +45,35 @@ Released   : 20140225
 	<div id="page" class="container">
 		<div id="content">
 			<!--select shop-->
+			<h1>Change price or stock</h1>
+			<table class="table">
+				<form name="Restock">
+					<tr>
+						<td>Itemname</td>
+						<td>
+							<select name="Stockname">
+							{% for name in Itemnames%}
+								<option value="{{name}}">{{name}}</option>
+							{% endfor%}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Price</td>
+						<td>
+							<input type="text" name="Price" id="Price" />
+							<button type="button" class="btn" id="PriceChange">Edit</button>
+						</td>
+					</tr>
+					<tr>
+						<td>Amount</td>
+						<td>
+							<input type="text" name="Amount" id="Amount" />
+							<button type="button" class="btn" id="AmountChange">Edit</button>
+						</td>
+					<tr>
+				</form>
+			</table>
 			<h1>All Order</h1>
 			<table class="table">
 				<form name="OrderSelect">

@@ -78,8 +78,10 @@ def registerPage():
 def homePage():
     Acc = current_user.get_id()
     if(Acc == 'admin'):
+        from queryfunc import getItemNames
+        Itemnames = getItemNames()
         Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
-        return render_template('admin.html', Status=Status)
+        return render_template('admin.html', Status=Status, Itemnames=Itemnames)
     else:
         return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
 
@@ -135,9 +137,8 @@ def _searchGoods():
 def _PriceChange():
     from queryfunc import PriceChange
     Price = request.args.get('Price')
-    Acc = current_user.get_id()
-    Shop = users[Acc][1]
-    data = PriceChange(Shop, Price)
+    Itemname = request.args.get('Itemname')
+    data = PriceChange(Itemname, Price)
     return jsonify(data)
 
 
@@ -145,9 +146,8 @@ def _PriceChange():
 def _AmountChange():
     from queryfunc import AmountChange
     Amount = request.args.get('Amount')
-    Acc = current_user.get_id()
-    Shop = users[Acc][1]
-    data = AmountChange(Shop, Amount)
+    Itemname = request.args.get('Itemname')
+    data = AmountChange(Itemname, Amount)
     return jsonify(data)
 
 

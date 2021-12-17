@@ -207,6 +207,7 @@ $("#orderWrap").on("click", ".DelOrderBtn", function () {
         }
     })
 })
+
 $("#orderWrap").on("click", ".DoneOrderBtn", function () {
     var data = {
         OID: this.id
@@ -332,6 +333,54 @@ $("#SearchShopOrderbtn").bind("click", function () {
             }
             insertText += '</table>';
             $('#searchWrap').append(insertText);
+        }
+    })
+})
+
+$("#PriceChange").bind("click", function () {
+    const form = document.forms["Restock"];
+    const Itemname = form.elements.Stockname.value;
+    const Price = form.elements.Price.value;
+    var data = {
+        Itemname: Itemname,
+        Price: Price
+    }
+    $.ajax({
+        url: '/_PriceChange',
+        type: 'GET',
+        data: data,
+        beforeSend: function () {
+        },
+        success: function (result) {
+            alert(result.data)
+        },
+        complete: function () {
+        },
+        error: function () {
+        }
+    })
+})
+
+$("#AmountChange").bind("click", function () {
+    const form = document.forms["Restock"];
+    const Itemname = form.elements.Stockname.value;
+    const Amount = form.elements.Amount.value;
+    var data = {
+        Itemname: Itemname,
+        Amount: Amount
+    }
+    $.ajax({
+        url: '/_AmountChange',
+        type: 'GET',
+        data: data,
+        beforeSend: function () {
+        },
+        success: function (result) {
+            alert(result.data)
+        },
+        complete: function () {
+        },
+        error: function () {
         }
     })
 })

@@ -187,15 +187,8 @@ def _searchMyOrderList():
     from queryfunc import searchMyOrderList
     Status = request.args.get('Status')
     Acc = current_user.get_id()
-    data1 = searchMyOrderList(Acc, Status)
-    data2 = {'data': []}
-    for data in data1['data']:
-        # return like searchGoods
-        # orders by this Acc
-        # OID Status Start End Shop Total Price
-        data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +
-                             "<br> "+data[5]), data[6], ("$"+data[9] + "<br> (" + data[7]+"*$"+data[8]+")")])
-    return jsonify(data2)
+    data = searchMyOrderList(Acc, Status)
+    return jsonify(data)
 
 
 @app.route('/_searchShopOrderList', methods=['GET'])

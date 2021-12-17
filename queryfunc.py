@@ -154,10 +154,12 @@ def searchGoods(Itemname, LowPrice, HighPrice, name):
     db = sqlite3.connect("data.db")
     cursor = db.execute(query)
     for row in cursor:
-        insert = []
-        for r in row:
-            insert.append(r)
-        data['data'].append(insert)
+        print(row)
+        if(row[-1] != "0"):
+            insert = []
+            for r in row:
+                insert.append(r)
+            data['data'].append(insert)
 
     return data
 
@@ -209,7 +211,7 @@ def searchMyOrderList(Acc, Status):
     data = {'data': []}
 
     query = \
-        "select orderID, stat, time_start, orderer, time_end, itemname, order_amount, order_price\
+        "select orderID, stat, time_start, time_end, itemname, order_price\
     from order_\
     where orderer = '" + str(Acc) + "'         "
 
@@ -226,10 +228,8 @@ def searchMyOrderList(Acc, Status):
 
     for row in cursor:
         insert = []
-        for i in range(len(row)):
-            insert.append(row[i])
-        price = int(row[-1]) / int(row[-2])
-        insert.append(str(int(price)))
+        for i in row:
+            insert.append(i)
         data['data'].append(insert)
 
     print(data)
@@ -338,29 +338,44 @@ def DelOrder(Acc, OID):
     cursor = db.execute(query2)
     db.commit()
 
-    query3 = "update order_\
-    set seller = '" + str(Acc) + "'\
-    where orderID = " + str(OID) + ""
-
-    cursor = db.execute(query3)
-    db.commit()
-
-    query4 = "select stock\
+    query3 = "select stock\
     from shop\
     where itemname = '" + shop + "'"
 
-    cursor = db.execute(query4)
+    cursor = db.execute(query3)
     row = cursor.fetchone()
 
     remain = int(row[0])
     result = remain + amount
 
-    query5 = "update shop\
+    query4 = "update shop\
     set stock = " + str(result) + " where itemname = '" + shop + "'"
-    cursor = db.execute(query5)
+    cursor = db.execute(query4)
     db.commit()
 
     data["data"] = "Order successfully cancelled"
+    return data
+
+
+def DelAllOrder(Acc, OIDs):
+    import sqlite3
+    import time
+
+    data = {"data": ""}
+    print("DelAllOrder")
+    print(OIDs)
+
+    for OID in OIDs:
+        d = DelOrder(Acc, OID)
+        if(d["data"] != "Order successfully cancelled"):
+            data["data"] += d["data"] + "<br>"
+
+    if data["data"].endswith("<br>"):
+        data["data"] = data["data"][:-6]
+
+    if data["data"] == "":
+        data["data"] = "Orders successfully cancelled"
+
     return data
 
 

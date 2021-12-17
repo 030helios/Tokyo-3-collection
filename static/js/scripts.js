@@ -92,13 +92,13 @@ $("#SearchGoodsbtn").bind("click", function () {
         success: function (result) {
             var insertText = '';
             for (var i = 0; i < result.data.length; i++) {
-                insertText += '<div class="col-lg-3 col-sm-6 col-md-3 OrderBtn"><a><div class="box-img"><h4>'
+                insertText += '<div class="col-lg-3 col-sm-6 col-md-3"><a><div class="box-img"><h5>'
                 insertText += result.data[i][0];
                 insertText += '<br><input type="text" name="Amount" id="_';
                 insertText += result.data[i][0];
                 insertText += '"/><button type="button" class="OrderBtn" id="';
                 insertText += result.data[i][0];
-                insertText += '">Buy!</button></h4><img src="';
+                insertText += '">Buy!</button></h5><img src="';
                 insertText += result.data[i][1];
                 insertText += '" width="300" height="300" alt="" /></div></a></div>';
             }

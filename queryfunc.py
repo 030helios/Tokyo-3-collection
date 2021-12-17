@@ -8,7 +8,7 @@ def prevent(target):
 def getItemNames():
     import sqlite3
     query = "select distinct itemname from shop"
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.execute(query)
 
     data = []
@@ -34,7 +34,7 @@ def tryLogin(Acc, pwd):
         from user \
         where username = '" + str(Acc) + "'"
 
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.cursor()
     cursor.execute(query)
     row = cursor.fetchone()
@@ -110,7 +110,7 @@ def tryRegister(Acc, Pwd, ConPwd, Phone):
 
     print(query1)
 
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     print(db)
     cursor = db.cursor()
     print(cursor)
@@ -162,7 +162,7 @@ def searchGoods(Itemname, LowPrice, HighPrice):
     query = query[0:-6]
 
     print(query)
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.execute(query)
     for row in cursor:
         print(row)
@@ -178,7 +178,7 @@ def PriceChange(Itemname, Price):
     import sqlite3
     Price.replace(' ', '')
     data = {"data": ""}
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
 
     if Price.isdigit() == False:
         data["data"] = "Invalid format"
@@ -199,7 +199,7 @@ def AmountChange(Itemname, Amount):
     import sqlite3
     Amount.replace(' ', '')
     data = {"data": ""}
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
 
     if Amount.isdigit() == False:
         data["data"] = "Invalid format"
@@ -231,7 +231,7 @@ def searchMyOrderList(Acc, Status):
 
     print(query)
 
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.execute(query)
 
     print(cursor)
@@ -261,7 +261,7 @@ def searchShopOrderList(Itemname, Status):
     query = query[0:-6]
     print(query)
 
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.execute(query)
 
     for row in cursor:
@@ -289,7 +289,7 @@ def Order(Acc, Itemname, Amount):
     where itemname = '" + str(Itemname) + "'"
     print(query1)
 
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.execute(query1)
     row = cursor.fetchone()
 
@@ -338,7 +338,7 @@ def DelOrder(Acc, OID):
     from order_\
     where orderID = " + str(OID) + ""
 
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.execute(query)
     row = cursor.fetchone()
 
@@ -402,7 +402,7 @@ def DoneOrder(Acc, OID):
     from order_\
     where orderID = " + str(OID) + ""
 
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
     cursor = db.execute(query1)
     row = cursor.fetchone()
 
@@ -473,7 +473,7 @@ def DoneAllOrder(Acc, OIDs):
     import sqlite3
     import time
     data = {"data": ""}
-    db = sqlite3.connect("data.db")
+    db = sqlite3.connect("data/data.db")
 
     print("DoneAllOrder")
     print(OIDs)

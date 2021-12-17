@@ -12,14 +12,13 @@ FLASK_APP=run.py flask run
 ```
 
 The way to create "data.db"
-1. Open the terminal under ./data
-2. run "sqlite3 data.db"
-3. run 
+1. run "sqlite3 data/data.db"
+2. run the code below
 ```
 .mode csv
 .separator ","
-.import USER.csv user
-.import SHOP.csv shop
-.import ORDER.csv order_
+.import data/USER.csv user
+.import data/SHOP.csv shop
+.import data/ORDER.csv order_
 .exit
 ```

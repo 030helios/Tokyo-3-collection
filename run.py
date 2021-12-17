@@ -1,13 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from datetime import timedelta
-import json
-from urllib.request import urlopen
-
-myfile = urlopen("http://140.113.167.23/se2020/product/all").read()
-myfile = json.loads(myfile)
-pictures = [dic['img_url'] for dic in myfile]
-print(pictures)
 
 app = Flask(__name__)
 app.secret_key = 'dd06be55a06c03312b2ab109b5f8f6ab'
@@ -98,14 +91,14 @@ def homePage():
     return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
 
 
-@app.route('/_searchShopList', methods=['GET'])
-def _searchShopList():
-    from queryfunc import searchShopList
+@app.route('/_searchGoods', methods=['GET'])
+def _searchGoods():
+    from queryfunc import searchGoods
     Itemname = request.args.get('Itemname')
     LowPrice = request.args.get('LowPrice')
     HighPrice = request.args.get('HighPrice')
     Acc = current_user.get_id()
-    data = searchShopList(Itemname, LowPrice, HighPrice, Acc)
+    data = searchGoods(Itemname, LowPrice, HighPrice, Acc)
     return jsonify(data)
 
 
@@ -197,7 +190,7 @@ def _searchMyOrderList():
     data1 = searchMyOrderList(Acc, Status)
     data2 = {'data': []}
     for data in data1['data']:
-        # return like searchShopList
+        # return like searchGoods
         # orders by this Acc
         # OID Status Start End Shop Total Price
         data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +
@@ -213,7 +206,7 @@ def _searchShopOrderList():
     data1 = searchShopOrderList(_Shop, Status)
     data2 = {'data': []}
     for data in data1['data']:
-        # return like searchShopList
+        # return like searchGoods
         # orders by this Acc
         # OID Status Start End Shop Total Price
         data2['data'].append([data[0], data[1], (data[2]+"<br> "+data[3]), (data[4] +

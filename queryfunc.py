@@ -205,7 +205,7 @@ def getCities():
     return data
 
 
-def searchShopList(Itemname, LowPrice, HighPrice, name):
+def searchGoods(Itemname, LowPrice, HighPrice, name):
     import sqlite3
     data = {'data': []}
     query = \
@@ -371,7 +371,7 @@ def AmountChange(Shop, Amount):
     return data
 
 
-# return like searchShopList
+# return like searchGoods
 # orders by this Acc
 # OID Status Start End Shop Total Price
 def searchMyOrderList(Acc, Status):
@@ -407,7 +407,7 @@ def searchMyOrderList(Acc, Status):
     return data
 
 
-# return like searchShopList
+# return like searchGoods
 # OID Status Start End Shop Total Price
 def searchShopOrderList(Shop, Status):
     import sqlite3

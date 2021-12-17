@@ -97,8 +97,7 @@ def _searchGoods():
     Itemname = request.args.get('Itemname')
     LowPrice = request.args.get('LowPrice')
     HighPrice = request.args.get('HighPrice')
-    Acc = current_user.get_id()
-    data = searchGoods(Itemname, LowPrice, HighPrice, Acc)
+    data = searchGoods(Itemname, LowPrice, HighPrice)
     return jsonify(data)
 
 

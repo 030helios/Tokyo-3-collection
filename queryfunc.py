@@ -133,11 +133,11 @@ def tryRegister(Acc, Pwd, ConPwd, Phone):
     return data
 
 
-def searchGoods(Itemname, LowPrice, HighPrice, name):
+def searchGoods(Itemname, LowPrice, HighPrice):
     import sqlite3
     data = {'data': []}
     query = \
-        "select itemname, img_url, price, stock from shop where "
+        "select itemname, img_url, price, stock from shop where stock > 0 and  "
     if LowPrice != "" and HighPrice != "":
         if int(LowPrice) > int(HighPrice):
             LowPrice, HighPrice = HighPrice, LowPrice
@@ -155,11 +155,10 @@ def searchGoods(Itemname, LowPrice, HighPrice, name):
     cursor = db.execute(query)
     for row in cursor:
         print(row)
-        if(row[-1] != "0"):
-            insert = []
-            for r in row:
-                insert.append(r)
-            data['data'].append(insert)
+        insert = []
+        for r in row:
+            insert.append(r)
+        data['data'].append(insert)
 
     return data
 

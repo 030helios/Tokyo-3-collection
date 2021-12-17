@@ -94,9 +94,15 @@ $("#SearchGoodsbtn").bind("click", function () {
             for (var i = 0; i < result.data.length; i++) {
                 insertText += '<div class="col-lg-3 col-sm-6 col-md-3"><a><div class="box-img"><h5>'
                 insertText += result.data[i][0];
-                insertText += '<br><input type="text" name="Amount" id="_';
+                insertText += '<br>$'
+                insertText += result.data[i][2];
+                insertText += ' '
+                insertText += result.data[i][3];
+                insertText += ' left<br><input type="text" name="Amount" id="_';
                 insertText += result.data[i][0];
-                insertText += '"/><button type="button" class="OrderBtn" id="';
+                insertText += '" size="';
+                insertText += Math.ceil(Math.log(parseInt(result.data[i][3]))).toString()
+                insertText += '"/>  <button type="button" class="OrderBtn" id="';
                 insertText += result.data[i][0];
                 insertText += '">Buy!</button></h5><img src="';
                 insertText += result.data[i][1];

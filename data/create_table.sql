@@ -20,10 +20,10 @@ create table order_(
     orderID int not null,
     stat varchar(20) not null,
     orderer varchar(20) not null,
-    category varchar(20) not null,
     itemname varchar(20) not null,
     time_start varchar(20) not null,
     time_end varchar(20) not null,
     order_amount int not null,
+    order_price int not null,
     primary key (orderID)
 );

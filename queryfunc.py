@@ -133,78 +133,6 @@ def tryRegister(Acc, Pwd, ConPwd, Phone):
     return data
 
 
-def tryRegisterShop(Shop, City, Price, Amount, name):
-    import sqlite3
-    import random
-    Price.replace(' ', '')
-    Amount.replace(' ', '')
-    data = {'0': "", '1': "", '2': "", '3': ""}
-    noEx = True
-    db = sqlite3.connect("data.db")
-
-    if Shop == "":
-        data['0'] = "Required!"
-        noEx = False
-    if City == "":
-        data['1'] = "Required!"
-        noEx = False
-    if Price == "":
-        data['2'] = "Required!"
-        noEx = False
-    if Amount == "":
-        data['3'] = "Required!"
-        noEx = False
-    if Price.isdigit() == False:
-        data['2'] = "Invalid format"
-        noEx = False
-    if Amount.isdigit() == False:
-        data['3'] = "Invalid format"
-        noEx = False
-    if prevent(Shop) == False:
-        data['0'] = "Illegal character detected"
-        noEx = False
-
-    if noEx == False:
-        db.close()
-        return data
-
-    query1 = "select shopname\
-        from shop\
-        where shopname = '" + str(Shop) + "'"
-
-    cursor = db.cursor()
-    cursor.execute(query1)
-
-    if cursor.fetchone() != None:
-        data['0'] = "Shopname repeated"
-        db.close()
-        return data
-    else:
-        S_ID = str(random.randint(100000, 999999))
-        query2 = "insert into shop\
-            values('" + S_ID + "','" + str(Shop) + "','" + str(City) + "','" + str(name) + "'," + str(Price) + "," + str(Amount) + ")"
-        cursor.execute(query2)
-        db.commit()
-        data['0'] = 'Register Success'
-    db.close()
-    return data
-
-
-def getCities():
-    import sqlite3
-    query = "select distinct city \
-    from shop"
-
-    data = []
-
-    db = sqlite3.connect("data.db")
-    cursor = db.execute(query)
-    for row in cursor:
-        print(str(row[0]))
-        data.append(str(row[0]))
-    return data
-
-
 def searchGoods(Itemname, LowPrice, HighPrice, name):
     import sqlite3
     data = {'data': []}
@@ -234,101 +162,6 @@ def searchGoods(Itemname, LowPrice, HighPrice, name):
     return data
 
 
-def EmployeesOfShop(Shop):
-    import sqlite3
-    query = "select username, phone\
-    from employee natural join user \
-    where shopname = '" + str(Shop) + "'"
-
-    data = []
-
-    db = sqlite3.connect("data.db")
-    cursor = db.execute(query)
-    for row in cursor:
-        insert = []
-        insert.append(row[0])
-        insert.append(row[1])
-        data.append(insert)
-
-    return data
-
-
-def hasShop(name):
-    import sqlite3
-    data = {'HasShop': False, 'Shop': "", 'City': "", 'Price': 0, 'Amount': 0}
-
-    query = "select shopname, city, price, amount \
-    from shop \
-    where shopowner = '" + str(name) + "'"
-
-    db = sqlite3.connect("data.db")
-    cursor = db.cursor()
-    cursor.execute(query)
-    row = cursor.fetchone()
-
-    if row != None:
-        data['HasShop'] = True
-        data['Shop'] = row[0]
-        data['City'] = row[1]
-        data['Price'] = row[2]
-        data['Amount'] = row[3]
-
-    return data
-
-
-def AddEmployee(shop, employee):
-    import sqlite3
-    data = {"data": ""}
-
-    db = sqlite3.connect("data.db")
-
-    query = "select username\
-        from user\
-        where username = '" + str(employee) + "'"
-    cursor = db.execute(query)
-    if cursor.fetchone() == None:
-        data["data"] = "No result"
-        return data
-
-    query1 = "select shopname, username\
-        from employee\
-        where shopname = '" + str(shop) + "' and username = '" + str(employee) + "'"
-    cursor = db.execute(query1)
-
-    if cursor.fetchone() != None:
-        data["data"] = str(employee) + " is already in " + str(shop)
-        return data
-    else:
-        query2 = "insert into employee\
-            values('" + str(employee) + "','" + str(shop) + "')"
-        cursor = db.execute(query2)
-        db.commit()
-        data["data"] = "Employee successfully added"
-        return data
-
-
-def DelEmployee(shop, employee):
-    import sqlite3
-    data = {"data": ""}
-
-    db = sqlite3.connect("data.db")
-    query1 = "select shopname, username\
-        from employee\
-        where shopname = '" + str(shop) + "' and username = '" + str(employee) + "'"
-    cursor = db.execute(query1)
-
-    if cursor.fetchone() == None:
-        data["data"] = str(employee) + " is not in " + str(shop)
-        return data
-    else:
-        query2 = "delete from employee\
-            where shopname = '" + str(shop) + "' and username = '" + str(employee) + "'"
-        cursor = db.execute(query2)
-        db.commit()
-        data["data"] = "Employee successfully deleted"
-        return data
-
-
 def PriceChange(Shop, Price):
     import sqlite3
     Price.replace(' ', '')
@@ -343,7 +176,7 @@ def PriceChange(Shop, Price):
         return data
 
     query = "update shop\
-        set price = " + str(Price) + " where shopname = '" + str(Shop) + "'"
+        set price = " + str(Price) + " where itemname = '" + str(Shop) + "'"
     cursor = db.execute(query)
     db.commit()
     data["data"] = "Price succesfully changed"
@@ -364,22 +197,19 @@ def AmountChange(Shop, Amount):
         return data
 
     query = "update shop\
-        set amount = " + str(Amount) + " where shopname = '" + str(Shop) + "'"
+        set stock = " + str(Amount) + " where itemname = '" + str(Shop) + "'"
     cursor = db.execute(query)
     db.commit()
     data["data"] = "Amount succesfully changed"
     return data
 
 
-# return like searchGoods
-# orders by this Acc
-# OID Status Start End Shop Total Price
 def searchMyOrderList(Acc, Status):
     import sqlite3
     data = {'data': []}
 
     query = \
-        "select orderID, stat, time_start, orderer, time_end, seller, shopname, order_amount, order_price\
+        "select orderID, stat, time_start, orderer, time_end, itemname, order_amount, order_price\
     from order_\
     where orderer = '" + str(Acc) + "'         "
 
@@ -407,96 +237,6 @@ def searchMyOrderList(Acc, Status):
     return data
 
 
-# return like searchGoods
-# OID Status Start End Shop Total Price
-def searchShopOrderList(Shop, Status):
-    import sqlite3
-    data = {'data': []}
-
-    print(Shop)
-    print(Status)
-
-    query = \
-        "select orderID, stat, time_start, orderer, time_end, seller, shopname, order_amount, order_price\
-    from order_\
-    where   "
-    if Shop != "All":
-        query += "shopname = '" + str(Shop) + "' and  "
-    if Status != "All":
-        query += "stat = '" + str(Status) + "' and  "
-    query = query[0:-6]
-
-    print(query)
-
-    db = sqlite3.connect("data.db")
-    # error sqlite3.OperationalError: near "shop": syntax error
-    cursor1 = db.execute(query)
-
-    for row in cursor1:
-        insert = []
-        for i in range(len(row)):
-            insert.append(row[i])
-        price = int(row[-1]) / int(row[-2])
-        insert.append(str(int(price)))
-        data['data'].append(insert)
-
-    print(data)
-
-    return data
-
-
-def getAccShops(Acc):
-    import sqlite3
-    data = []
-
-    query_ = \
-        "select distinct shopname\
-    from shop\
-    where shopowner = '" + str(Acc) + "'"
-
-    db = sqlite3.connect("data.db")
-    cursor = db.execute(query_)
-    row = cursor.fetchone()
-
-    print(row)
-
-    if row != None:
-        data.append(str(row[0]))
-
-    query = \
-        "select distinct shopname\
-    from employee\
-    where username = '" + str(Acc) + "'"
-
-    db = sqlite3.connect("data.db")
-    cursor = db.execute(query)
-
-    for row in cursor:
-        print(row)
-        data.append(str(row[0]))
-
-    return data
-
-
-# return all Shops in a list
-def getShops():
-    import sqlite3
-    data = []
-    query = \
-        "select shopname\
-    from shop"
-
-    db = sqlite3.connect("data.db")
-    cursor = db.execute(query)
-
-    for row in cursor:
-        data.append(str(row[0]))
-
-    return data
-
-# return message: success or fail and why
-
-
 def Order(Acc, Shop, Amount):
     import sqlite3
     import time
@@ -507,9 +247,9 @@ def Order(Acc, Shop, Amount):
         data["data"] = "Illegal input Amount"
         return data
 
-    query1 = "select amount, price\
+    query1 = "select stock, price\
     from shop\
-    where shopname = '" + str(Shop) + "'"
+    where itemname = '" + str(Shop) + "'"
     print(query1)
 
     db = sqlite3.connect("data.db")
@@ -526,7 +266,7 @@ def Order(Acc, Shop, Amount):
     result = inventory - int(Amount)
 
     query_ = "update shop\
-    set amount = " + str(result) + " where shopname = '" + str(Shop) + "'"
+    set stock = " + str(result) + " where itemname = '" + str(Shop) + "'"
     cursor = db.execute(query_)
     db.commit()
 
@@ -542,7 +282,7 @@ def Order(Acc, Shop, Amount):
     time_start = time.strftime("%Y_%m_%d_%H_%M_%S")
 
     query3 = "insert into order_\
-    values(" + str(OID) + ",'Not Finished','" + str(Acc) + "','" + "" + "','" + str(time_start) + "','" + "" + "','" + str(Shop) + "'," + str(Amount) + "," + str(int(Amount) * price) + ")"
+    values(" + str(OID) + ",'Not Finished','" + str(Acc) + "','" + str(Shop) + "','" + str(time_start) + "','" + "" + "'," + str(Amount) + "," + str(int(Amount) * price) + ")"
     print(query3)
 
     cursor = db.execute(query3)
@@ -552,14 +292,12 @@ def Order(Acc, Shop, Amount):
 
     return data
 
-# return message: success or fail and why
-
 
 def DelOrder(Acc, OID):
     import sqlite3
     import time
     data = {"data": ""}
-    query = "select orderID, stat, order_amount, shopname\
+    query = "select orderID, stat, order_amount, itemname\
     from order_\
     where orderID = " + str(OID) + ""
 
@@ -607,9 +345,9 @@ def DelOrder(Acc, OID):
     cursor = db.execute(query3)
     db.commit()
 
-    query4 = "select amount\
+    query4 = "select stock\
     from shop\
-    where shopname = '" + shop + "'"
+    where itemname = '" + shop + "'"
 
     cursor = db.execute(query4)
     row = cursor.fetchone()
@@ -618,7 +356,7 @@ def DelOrder(Acc, OID):
     result = remain + amount
 
     query5 = "update shop\
-    set amount = " + str(result) + " where shopname = '" + shop + "'"
+    set stock = " + str(result) + " where itemname = '" + shop + "'"
     cursor = db.execute(query5)
     db.commit()
 
@@ -630,7 +368,7 @@ def DoneOrder(Acc, OID):
     import sqlite3
     import time
     data = {"data": ""}
-    query1 = "select shopname, order_amount, stat\
+    query1 = "select itemname, order_amount, stat\
     from order_\
     where orderID = " + str(OID) + ""
 
@@ -676,146 +414,4 @@ def DoneOrder(Acc, OID):
 
     data["data"] = "Order successfully done"
 
-    return data
-
-
-def DoneAllOrder(Acc, OIDs):
-    import sqlite3
-    import time
-    data = {"data": ""}
-    db = sqlite3.connect("data.db")
-
-    print("DoneAllOrder")
-    print(OIDs)
-
-    for OID in OIDs:
-        print(OID)
-        query1 = "select shopname, order_amount, stat\
-        from order_\
-        where orderID = " + str(OID) + ""
-
-        cursor = db.execute(query1)
-        row = cursor.fetchone()
-
-        shop = str(row[0])
-        amount = int(row[1])
-        stat = str(row[2])
-
-        if stat == "Cancelled":
-            data["data"] = "The order number " + \
-                str(OID) + " is already cancelled"
-            return data
-
-        if stat == "Finished":
-            data["data"] = "Finished order" + str(OID) + "can't be cancelled"
-            return data
-
-        t = time.localtime()
-        time_end = time.strftime("%Y_%m_%d_%H_%M_%S")
-
-        query4 = "update order_\
-        set stat = " + "'Finished'\
-        where orderID = " + str(OID) + ""
-
-        print(query4)
-
-        cursor = db.execute(query4)
-        db.commit()
-
-        query5 = "update order_\
-        set time_end = '" + str(time_end) + "'\
-        where orderID = " + str(OID) + ""
-
-        cursor = db.execute(query5)
-        db.commit()
-
-        query6 = "update order_\
-            set seller = '" + str(Acc) + "'\
-            where orderID = " + str(OID) + ""
-
-        cursor = db.execute(query6)
-        db.commit()
-
-    data["data"] = "Orders all succesfully done"
-
-    return data
-
-
-def DelAllOrder(Acc, OIDs):
-    import sqlite3
-    import time
-
-    data = {"data": ""}
-    db = sqlite3.connect("data.db")
-
-    print("DelAllOrder")
-    print(OIDs)
-
-    for OID in OIDs:
-        print(OID)
-
-        query = "select orderID, stat, shopname, order_amount\
-            from order_\
-            where orderID = " + str(OID) + ""
-
-        cursor = db.execute(query)
-        row = cursor.fetchone()
-
-        shop = str(row[2])
-        amount = int(row[3])
-
-        if row == None:
-            data["data"] = "Order " + str(OID) + " doesn't exist"
-            return data
-
-        if str(row[1]) == "Cancelled":
-            data["data"] = "The order number " + \
-                str(OID) + " is already cancelled"
-            return data
-
-        if str(row[1]) == "Finished":
-            data["data"] = "Finished order number " + \
-                str(OID) + " can't be cancelled"
-            return data
-
-        t = time.localtime()
-        time_end = time.strftime("%Y_%m_%d_%H_%M_%S")
-
-        query1 = "update order_\
-            set stat = " + "'Cancelled'\
-            where orderID = " + str(OID) + ""
-
-        cursor = db.execute(query1)
-        db.commit()
-
-        query2 = "update order_\
-            set time_end = '" + str(time_end) + "'\
-            where orderID = " + str(OID) + ""
-
-        cursor = db.execute(query2)
-        db.commit()
-
-        query3 = "update order_\
-            set seller = '" + str(Acc) + "'\
-            where orderID = " + str(OID) + ""
-
-        cursor = db.execute(query3)
-        db.commit()
-
-        query4 = "select amount\
-        from shop\
-        where shopname = '" + shop + "'"
-
-        cursor = db.execute(query4)
-        row = cursor.fetchone()
-
-        remain = int(row[0])
-        result = remain + amount
-
-        query5 = "update shop\
-        set amount = " + str(result) + " where shopname = '" + shop + "'"
-        cursor = db.execute(query5)
-        db.commit()
-
-    data["data"] = "Orders all successfully cancelled"
     return data

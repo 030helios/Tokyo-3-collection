@@ -96,11 +96,35 @@ $("#SearchGoodsbtn").bind("click", function () {
                 insertText += result.data[i][0];
                 insertText += '<br><input type="text" name="Amount" id="_';
                 insertText += result.data[i][0];
-                insertText += '"/></h4><img src="';
+                insertText += '"/><button type="button" class="OrderBtn" id="';
+                insertText += result.data[i][0];
+                insertText += '">Buy!</button></h4><img src="';
                 insertText += result.data[i][1];
                 insertText += '" width="300" height="300" alt="" /></div></a></div>';
             }
             $('#goodsWrap').append(insertText);
+        },
+        complete: function () {
+        },
+        error: function () {
+        }
+    })
+})
+
+$("#goodsWrap").on("click", ".OrderBtn", function () {
+    var data = {
+        Shop: this.id,
+        Amount: document.getElementById('_' + this.id).value
+    }
+    $.ajax({
+        url: '/_Order',
+        type: 'GET',
+        data: data,
+        beforeSend: function () {
+        },
+        success: function (result) {
+            alert(result.data)
+            location.reload();
         },
         complete: function () {
         },

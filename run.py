@@ -73,36 +73,15 @@ def registerPage():
     return render_template('register.html')
 
 
-@app.route('/_register', methods=['GET'])
-def _tryRegister():
-    from queryfunc import tryRegister
-    Acc = request.args.get('Account')
-    Pwd = request.args.get('Password')
-    ConPwd = request.args.get('ConfirmPassword')
-    Phone = request.args.get('PhoneNumber')
-    data = tryRegister(Acc, Pwd, ConPwd, Phone)
-    return jsonify(data)
-
-
 @app.route('/home')
 @login_required
 def homePage():
     Acc = current_user.get_id()
-    if(Acc=='admin'):
+    if(Acc == 'admin'):
         Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
         return render_template('admin.html', Status=Status)
     else:
         return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
-
-
-@app.route('/_searchGoods', methods=['GET'])
-def _searchGoods():
-    from queryfunc import searchGoods
-    Itemname = request.args.get('Itemname')
-    LowPrice = request.args.get('LowPrice')
-    HighPrice = request.args.get('HighPrice')
-    data = searchGoods(Itemname, LowPrice, HighPrice)
-    return jsonify(data)
 
 
 @app.route('/shop')
@@ -124,35 +103,31 @@ def shopPage():
     return render_template('registerShop.html', Cities=Cities)
 
 
-@app.route('/_registerShop', methods=['GET'])
-def _tryRegisterShop():
-    from queryfunc import tryRegisterShop
-    Shop = request.args.get('Shop')
-    City = request.args.get('City')
-    Price = request.args.get('Price')
-    Amount = request.args.get('Amount')
-    Acc = current_user.get_id()
-    data = tryRegisterShop(Shop, City, Price, Amount, Acc)
+@app.route('/myOrder')
+@login_required
+def myOrder():
+    Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
+    return render_template('myOrder.html', Status=Status)
+
+
+@app.route('/_register', methods=['GET'])
+def _tryRegister():
+    from queryfunc import tryRegister
+    Acc = request.args.get('Account')
+    Pwd = request.args.get('Password')
+    ConPwd = request.args.get('ConfirmPassword')
+    Phone = request.args.get('PhoneNumber')
+    data = tryRegister(Acc, Pwd, ConPwd, Phone)
     return jsonify(data)
 
 
-@app.route('/_AddEmployee', methods=['GET'])
-def _AddEmployee():
-    from queryfunc import AddEmployee
-    Employee = request.args.get('Employee')
-    Acc = current_user.get_id()
-    Shop = users[Acc][1]
-    data = AddEmployee(Shop, Employee)
-    return jsonify(data)
-
-
-@app.route('/_DelEmployee', methods=['GET'])
-def _DelEmployee():
-    from queryfunc import DelEmployee
-    Employee = request.args.get('Employee')
-    Acc = current_user.get_id()
-    Shop = users[Acc][1]
-    data = DelEmployee(Shop, Employee)
+@app.route('/_searchGoods', methods=['GET'])
+def _searchGoods():
+    from queryfunc import searchGoods
+    Itemname = request.args.get('Itemname')
+    LowPrice = request.args.get('LowPrice')
+    HighPrice = request.args.get('HighPrice')
+    data = searchGoods(Itemname, LowPrice, HighPrice)
     return jsonify(data)
 
 
@@ -174,15 +149,6 @@ def _AmountChange():
     Shop = users[Acc][1]
     data = AmountChange(Shop, Amount)
     return jsonify(data)
-
-# New Stuff!
-
-
-@app.route('/myOrder')
-@login_required
-def myOrder():
-    Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
-    return render_template('myOrder.html', Status=Status)
 
 
 @app.route('/_searchMyOrderList', methods=['GET'])
@@ -234,21 +200,21 @@ def _DoneOrder():
     return jsonify(data)
 
 
-@app.route('/_DoneAllOrder', methods=['GET'])
-def _DoneAllOrder():
-    from queryfunc import DoneAllOrder
-    Acc = current_user.get_id()
-    OIDs = request.args.get('OIDs').split()
-    data = DoneAllOrder(Acc, OIDs)
-    # return message: success or fail and why
-    return jsonify(data)
-
-
 @app.route('/_DelAllOrder', methods=['GET'])
 def _DelAllOrder():
     from queryfunc import DelAllOrder
     Acc = current_user.get_id()
     OIDs = request.args.get('OIDs').split()
     data = DelAllOrder(Acc, OIDs)
+    # return message: success or fail and why
+    return jsonify(data)
+
+
+@app.route('/_DoneAllOrder', methods=['GET'])
+def _DoneAllOrder():
+    from queryfunc import DoneAllOrder
+    Acc = current_user.get_id()
+    OIDs = request.args.get('OIDs').split()
+    data = DoneAllOrder(Acc, OIDs)
     # return message: success or fail and why
     return jsonify(data)

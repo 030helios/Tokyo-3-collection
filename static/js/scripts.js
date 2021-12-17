@@ -256,9 +256,9 @@ $(".DelAllOrderBtn").bind("click", function () {
 
 $(".DoneAllOrderBtn").bind("click", function () {
     var checkboxesChecked = "";
-    $("input[type=checkbox]:checked").each(function() {
-        checkboxesChecked+=($(this).val());
-        checkboxesChecked+=" ";
+    $("input[type=checkbox]:checked").each(function () {
+        checkboxesChecked += ($(this).val());
+        checkboxesChecked += " ";
     });
     var data = {
         OIDs: checkboxesChecked

@@ -80,7 +80,7 @@ def homePage():
     if(Acc == 'admin'):
         from queryfunc import getItemNames
         Itemnames = getItemNames()
-        Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
+        Status = ['All', 'Paid', 'Not Finished', 'Finished', 'Cancelled']
         return render_template('admin.html', Status=Status, Itemnames=Itemnames)
     else:
         return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
@@ -108,7 +108,7 @@ def shopPage():
 @app.route('/myOrder')
 @login_required
 def myOrder():
-    Status = ['All', 'Not Finished', 'Finished', 'Cancelled']
+    Status = ['All', 'Paid', 'Not Finished', 'Finished', 'Cancelled']
     return render_template('myOrder.html', Status=Status)
 
 
@@ -206,6 +206,16 @@ def _DelAllOrder():
     Acc = current_user.get_id()
     OIDs = request.args.get('OIDs').split()
     data = DelAllOrder(Acc, OIDs)
+    # return message: success or fail and why
+    return jsonify(data)
+
+
+@app.route('/_PayAllOrder', methods=['GET'])
+def _PayAllOrder():
+    from queryfunc import PayAllOrder
+    Acc = current_user.get_id()
+    OIDs = request.args.get('OIDs').split()
+    data = PayAllOrder(Acc, OIDs)
     # return message: success or fail and why
     return jsonify(data)
 

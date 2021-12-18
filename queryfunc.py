@@ -493,6 +493,11 @@ def DoneAllOrder(Acc, OIDs):
                 str(OID) + " is already cancelled"
             return data
 
+        if stat == "Not Finished":
+            data["data"] = "The order number " + \
+                str(OID) + " is not paid"
+            return data
+
         if stat == "Finished":
             data["data"] = "Finished order" + str(OID) + "can't be cancelled"
             return data
@@ -516,5 +521,50 @@ def DoneAllOrder(Acc, OIDs):
         db.commit()
 
     data["data"] = "Orders all succesfully done"
+
+    return data
+
+
+def PayAllOrder(Acc, OIDs):
+    import sqlite3
+    import time
+    data = {"data": ""}
+    db = sqlite3.connect("data/data.db")
+
+    print("PayAllOrder")
+    print(OIDs)
+
+    for OID in OIDs:
+        print(OID)
+        query1 = "select stat\
+        from order_\
+        where orderID = " + str(OID) + ""
+
+        cursor = db.execute(query1)
+        row = cursor.fetchone()
+        stat = str(row[0])
+
+        if stat == "Cancelled":
+            data["data"] = "The order number " + \
+                str(OID) + " is already cancelled"
+            return data
+
+        if stat == "Paid" or stat == "Finished":
+            data["data"] = "The order number " + \
+                str(OID) + " has been paid"
+            return data
+
+        time_end = time.strftime("%Y_%m_%d_%H_%M_%S")
+
+        query1 = "update order_\
+        set stat = " + "'Paid'\
+        where orderID = " + str(OID) + ""
+
+        print(query1)
+
+        cursor = db.execute(query1)
+        db.commit()
+
+    data["data"] = "Orders all succesfully paid"
 
     return data

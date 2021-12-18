@@ -164,7 +164,7 @@ $("#SearchMyOrderbtn").bind("click", function () {
             </tr></thead>';
             for (var i = 0; i < result.data.length; i++) {
                 insertText += '<tr><td>';
-                if (result.data[i][1] == "Not Finished") {
+                if (result.data[i][1] != "Finished") {
                     insertText += '<label class="switch"><input type="checkbox" class="chkboxName" id="';
                     insertText += result.data[i][0] + '"value="' + result.data[i][0];
                     insertText += '"></label>';
@@ -255,6 +255,32 @@ $(".DelAllOrderBtn").bind("click", function () {
     })
 })
 
+$(".PayAllOrderBtn").bind("click", function () {
+    var checkboxesChecked = "";
+    $("input[type=checkbox]:checked").each(function () {
+        checkboxesChecked += ($(this).val());
+        checkboxesChecked += " ";
+    });
+    var data = {
+        OIDs: checkboxesChecked
+    }
+    $.ajax({
+        url: '/_PayAllOrder',
+        type: 'GET',
+        data: data,
+        beforeSend: function () {
+        },
+        success: function (result) {
+            alert(result.data)
+            location.reload();
+        },
+        complete: function () {
+        },
+        error: function () {
+        }
+    })
+})
+
 $(".DoneAllOrderBtn").bind("click", function () {
     var checkboxesChecked = "";
     $("input[type=checkbox]:checked").each(function () {
@@ -309,7 +335,7 @@ $("#SearchShopOrderbtn").bind("click", function () {
             </tr></thead>';
             for (var i = 0; i < result.data.length; i++) {
                 insertText += '<tr><td>';
-                if (result.data[i][2] == "Not Finished") {
+                if (result.data[i][2] != "Finished") {
                     insertText += '<label class="switch"><input type="checkbox" class="chkboxName" id="';
                     insertText += result.data[i][0] + '"value="' + result.data[i][0];
                     insertText += '"></label>';

@@ -11,6 +11,7 @@ FLASK_APP=run.py flask run
 ```
 ## 資料庫重啓
 ```
+python3 initialize.py
 sqlite3 data/data.db
 .mode csv
 .separator ","

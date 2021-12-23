@@ -5,6 +5,21 @@ def prevent(target):
         return True
 
 
+def getPayment():
+    import sqlite3
+    import time
+    query = "select order_price from order_ where stat = 'Finished' and time_end like '%" + \
+        time.strftime("%Y_%m_%d") + "%'"
+    db = sqlite3.connect("data/data.db")
+    cursor = db.execute(query)
+
+    ret = 0
+    for row in cursor:
+        print(str(row[0]))
+        ret += int(row[0])
+    return ret
+
+
 def getItemNames():
     import sqlite3
     query = "select distinct itemname from shop"

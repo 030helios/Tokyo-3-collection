@@ -78,10 +78,9 @@ def registerPage():
 def homePage():
     Acc = current_user.get_id()
     if(Acc == 'admin'):
-        from queryfunc import getItemNames
-        Itemnames = getItemNames()
+        from queryfunc import getItemNames, getPayment
         Status = ['All', 'Paid', 'Not Finished', 'Finished', 'Cancelled']
-        return render_template('admin.html', Status=Status, Itemnames=Itemnames)
+        return render_template('admin.html', Status=Status, Itemnames=getItemNames(), payment=getPayment())
     else:
         return render_template('home.html', Acc=Acc, Phone=users[Acc][0])
 
